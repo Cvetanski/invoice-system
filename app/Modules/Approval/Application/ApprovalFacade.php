@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Approval\Application;
 
 use App\Domain\Enums\StatusEnum;
+use App\Models\Invoice;
 use App\Modules\Invoices\Infrastructure\Exceptions\ApprovalStatusAlreadyRegistered;
 use App\Modules\Invoices\Infrastructure\InvoiceRepository;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -14,7 +15,7 @@ use App\Modules\Approval\DTO\ApprovalDTO;
 use App\Modules\Approval\Events\InvoiceApproved;
 use App\Modules\Approval\Events\InvoiceRejected;
 
-final readonly class ApprovalFacade implements ApprovalFacadeInterface
+final class ApprovalFacade implements ApprovalFacadeInterface
 {
     public function __construct(
         private Dispatcher $dispatcher,
@@ -41,7 +42,8 @@ final readonly class ApprovalFacade implements ApprovalFacadeInterface
 
     private function validate(ApprovalDTO $dto): void
     {
-        if (StatusEnum::DRAFT !== StatusEnum::tryFrom($dto->status->value)) {
+        $invoice = Invoice::find($dto->id);
+        if ($invoice->status !== StatusEnum::DRAFT->value) {
             throw new ApprovalStatusAlreadyRegistered('approval status is already assigned');
         }
     }

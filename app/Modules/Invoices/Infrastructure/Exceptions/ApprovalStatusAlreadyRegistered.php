@@ -1,7 +1,6 @@
 <?php
 namespace App\Modules\Invoices\Infrastructure\Exceptions;
 
-use Exception;
 use LogicException;
 
 class ApprovalStatusAlreadyRegistered extends LogicException
